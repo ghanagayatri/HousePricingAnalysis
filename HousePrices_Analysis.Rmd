@@ -1,0 +1,95 @@
+---
+title: "HousePricing_Modeling"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This document shows how to build a linear regression model and non-linear regression model from the house pricing dataset by comparing the Sale Prices with GrLivingArea
+
+```{r }
+house_prices <- read.csv("Desktop/MontecCarloSimulation/train.csv")
+str(house_prices)
+```
+```{r}
+cor(house_prices$SalePrice, house_prices$GrLivArea)
+
+```
+```{r}
+# fit a simple linear model
+linear_model<- lm(SalePrice ~ GrLivArea, data = house_prices)
+
+# plot the observations
+plot(house_prices$GrLivArea, house_prices$SalePrice,
+     col = "steelblue",
+     pch = 20,
+     xlab = "Greater Living Area", 
+     ylab = "Sale Price",
+     cex.main = 0.9,
+     main = "Sale Price vs. Greater Living Area and a Linear OLS Regression Function")
+
+# add the regression line to the plot
+abline(linear_model, 
+       col = "red", 
+       lwd = 2)
+
+```
+```{r}
+# obtain the model summary
+coeftest(linear_model, vcov. = vcovHC, type = "HC1")
+```
+
+```{r}
+# fit the quadratic Model
+quadratic_model <- lm(SalePrice ~ I(GrLivArea^2), data = house_prices)
+
+# obtain the model summary
+coeftest(quadratic_model, vcov. = vcovHC, type = "HC1")
+```
+```{r}
+# draw a scatterplot of the observations for income and test score
+plot(house_prices$GrLivArea, house_prices$SalePrice,
+     col  = "steelblue",
+     pch = 20,
+     xlab = "District Income (thousands of dollars)",
+     ylab = "Test Score",
+     main = "Estimated Linear and Quadratic Regression Functions")
+
+# add a linear function to the plot
+abline(linear_model, col = "black", lwd = 2)
+
+# add quatratic function to the plot
+order_id <- order(house_prices$GrLivArea)
+
+lines(x = house_prices$GrLivArea[order_id], 
+      y = fitted(quadratic_model)[order_id],
+      col = "red", 
+      lwd = 2) 
+```
+```{r}
+linear_res = resid(linear_model)
+
+plot(house_prices$GrLivArea, linear_res, 
+     ylab="Residuals", xlab="GrLivArea", 
+    main="Estimated Residuals") 
+abline(0, 0)    
+```
+```{r}
+quad_res = resid(quadratic_model)
+
+plot(house_prices$GrLivArea, quad_res, 
+     ylab="Residuals", xlab="GrLivArea", 
+    main="Estimated Residuals") 
+abline(0, 0)    
+```
+```{r}
+residualPlot(linear_model,type="rstandard")
+```
+
+```{r}
+residualPlot(quadratic_model,type="rstandard")
+```
