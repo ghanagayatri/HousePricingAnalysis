@@ -2,6 +2,7 @@
 title: "HousePricing_Modeling"
 output: rmarkdown::github_document
 
+
 ---
 
 ```{r, echo = FALSE}
@@ -15,7 +16,7 @@ knitr::opts_chunk$set(
 This document shows how to build a linear regression model and non-linear regression model from the house pricing dataset by comparing the Sale Prices with GrLivingArea
 
 ```{r }
-house_prices <- read.csv("Desktop/MontecCarloSimulation/train.csv")
+house_prices <- read.csv("~/Desktop/MontecCarloSimulation/train.csv")
 str(house_prices)
 ```
 ```{r}
@@ -43,7 +44,8 @@ abline(linear_model,
 ```
 ```{r}
 # obtain the model summary
-coeftest(linear_model, vcov. = vcovHC, type = "HC1")
+library(lmtest)
+coeftest(linear_model)
 ```
 
 ```{r}
@@ -51,7 +53,7 @@ coeftest(linear_model, vcov. = vcovHC, type = "HC1")
 quadratic_model <- lm(SalePrice ~ I(GrLivArea^2), data = house_prices)
 
 # obtain the model summary
-coeftest(quadratic_model, vcov. = vcovHC, type = "HC1")
+coeftest(quadratic_model)
 ```
 ```{r}
 # draw a scatterplot of the observations for income and test score
@@ -88,11 +90,4 @@ plot(house_prices$GrLivArea, quad_res,
      ylab="Residuals", xlab="GrLivArea", 
     main="Estimated Residuals") 
 abline(0, 0)    
-```
-```{r}
-residualPlot(linear_model,type="rstandard")
-```
-
-```{r}
-residualPlot(quadratic_model,type="rstandard")
 ```
